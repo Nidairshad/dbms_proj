@@ -1,0 +1,77 @@
+SELECT DISTINCT year
+FROM recap
+ORDER BY year; gives the batches 
+
+our regno values are 5 digits, from 30103 to 51996. 
+the first 2 digits are the batch code:
+30xxx = batch 1930 or 1950? maybe coded batch 30
+31xxx = batch 1931 or 1951?
+...
+51xxx = batch 1951
+
+....
+query to see all batches:
+SELECT
+    1920 + LEFT(regno, 2)::int AS batch_year,
+    LEFT(regno, 2) AS batch_code,
+    COUNT(*) AS total_students,
+    MIN(regno) AS first_regno,
+    MAX(regno) AS last_regno
+FROM student
+GROUP BY LEFT(regno, 2)
+ORDER BY batch_year;
+
+.....
+considering probation is on below 1.75 gpa like in szabist so query would be student on ptobation year
+WITH course_result AS (
+    SELECT
+        s.regno,
+        s.name,
+        LEFT(s.regno, 2) AS batch_code,
+        r.year,
+        r.semester,
+        c.cid,
+        c.code,
+        c.title,
+        (COALESCE(c.theory, 0) + COALESCE(c.lab, 0)) AS credit_hours,
+        SUM(m.marks) AS obtained_marks,
+        SUM(d.total) AS total_marks
+    FROM student s
+    JOIN marks m ON m.regno = s.regno
+    JOIN recap r ON r.rid = m.rid
+    JOIN course c ON c.cid = r.cid
+    JOIN dist d ON d.rid = m.rid AND d.hid = m.hid
+    GROUP BY
+        s.regno, s.name, r.year, r.semester,
+        c.cid, c.code, c.title, c.theory, c.lab
+),
+graded_result AS (
+    SELECT
+        cr.*,
+        g.grade,
+        g.gpa
+    FROM course_result cr
+    JOIN grade g
+        ON ROUND((cr.obtained_marks / NULLIF(cr.total_marks, 0) * 100)::numeric, 2)
+           BETWEEN g.start AND g."end"
+),
+student_cgpa AS (
+    SELECT
+        batch_code,
+        regno,
+        name,
+        ROUND(
+            SUM(gpa * credit_hours) / NULLIF(SUM(credit_hours), 0),
+            2
+        ) AS cgpa
+    FROM graded_result
+    GROUP BY batch_code, regno, name
+)
+SELECT
+    batch_code,
+    regno,
+    name,
+    cgpa
+FROM student_cgpa
+WHERE cgpa < 1.75
+ORDER BY batch_code, regno;

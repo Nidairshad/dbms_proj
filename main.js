@@ -1,8 +1,11 @@
+
 import express from 'express';
-import pool from "./db.js";
+import dotenv from "dotenv";
+dotenv.config();
+import pool from "./db.js"
 
 const app = express();
-const PORT = 8001;
+const PORT = process.env.PORT || 8001;
 
 app.use(express.json());
 app.use(express.static('public'));

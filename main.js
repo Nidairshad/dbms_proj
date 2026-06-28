@@ -155,5 +155,5 @@ app.get('/probation/:batchCode', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`server is running at http://localhost:${PORT}`);
+    console.log(`Server running on ${PORT}`);
 });

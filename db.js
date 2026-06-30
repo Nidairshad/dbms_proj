@@ -5,9 +5,9 @@ const { Pool } = pg;
 const pool = new Pool({
   host: "localhost",
   port: 5432,
-  user: "postgres",
-  password: "1234",
-  database: "exams",
+  user: "your username here",
+  password: "your postgres password here",
+  database: "your database name here - (Eg:exams)",
 });
 
 export default pool;

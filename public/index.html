@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Probation Report</title>
+
+    <script defer src="script.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
+</head>
+
+<body x-data="probationApp()" x-init="loadYears()">
+
+    <button @click="reset()">Reset</button>
+
+    <br><br>
+
+    <h3>Year</h3>
+
+    <template x-for="year in years" :key="year.year">
+
+        <button
+            @click="selectYear(year.year)"
+            :style="selectedYear===year.year ? 'background:lightgreen' : ''"
+            x-text="year.year">
+        </button>
+
+    </template>
+
+    <br><br>
+
+    <h3>Semester</h3>
+
+    <template x-for="semester in semesters" :key="semester.semester">
+
+        <button
+            @click="selectSemester(semester.semester)"
+            :style="selectedSemester===semester.semester ? 'background:lightgreen' : ''"
+            x-text="semester.semester">
+        </button>
+
+    </template>
+
+    <br><br>
+
+    <h3>Classes</h3>
+
+    <template x-for="cls in classes" :key="cls.class">
+
+        <button
+            @click="selectClass(cls.class)"
+            :style="selectedClass===cls.class ? 'background:lightgreen' : ''"
+            x-text="cls.class">
+        </button>
+
+    </template>
+
+    <br><br>
+
+    <h3>Probation Students</h3>
+
+    <table border="1" cellpadding="5">
+
+        <thead>
+
+            <tr>
+                <th>Reg No</th>
+                <th>Name</th>
+                <th>CGPA</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            <template x-for="student in students" :key="student.regno">
+
+                <tr>
+
+                    <td x-text="student.regno"></td>
+
+                    <td x-text="student.name"></td>
+
+                    <td x-text="student.cgpa"></td>
+
+                </tr>
+
+            </template>
+
+        </tbody>
+
+    </table>
+
+</body>
+</html>
